@@ -1,6 +1,6 @@
 const mysqlx = require( "@mysql/xdevapi" );
 class Core{
-
+    static ProjectAuth = "8c85193fdf943fe310ad4696b3c4cc0a"
     static Config = {
         host : "localhost",
         port : 33060,

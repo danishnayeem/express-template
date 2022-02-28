@@ -1,5 +1,6 @@
 const Db = require('../modules/Database');
 const Utils = require( '../modules/Utils' );
+
 class BasicInfo{
     static Filter(
         {
@@ -18,7 +19,7 @@ class BasicInfo{
                 Db.CoreDb.Procedure(
                     "spUser_BasicInfo_Filter",
                     [
-                        Utils.Config.ProjectAuth,
+                        Utils.Auth.Keys.ProjectAuth,
                         prUserId,
                         prFirstName,
                         prLastName,
@@ -66,12 +67,41 @@ class Auth{
 
     }
 
-    static Verify(){
-        // Continue to add auth key in user table and then from here/
+    static VerifyAuth( AuthKey ){
+        return new Promise(
+            (Resolve,Rej)=>{
+                if( !AuthKey )
+                    Resolve({
+                        Status : false,
+                        Message : "NO_AUTH"
+                    });
+                Db.CoreDb.Procedure(
+                    'spUser_VerifyAuth',
+                    [AuthKey],
+                    res=>{
+                        res = res.fetchAll();
+                        res = res[0];
+                        if( !res.Exist )
+                            Resolve({
+                                Status : false,
+                                Message : "NOT_EXIST"
+                            });
+                        else{
+                            Resolve({
+                                Status : (res.Status=='Active' ? true : false),
+                                Message : 'USER_' + res.Status.toUpperCase(),
+                                UserId : res.Id
+                            });
+                        }
+                    }
+                );
+            }
+        );
     }
 }
 
 module.exports = {
     Basic : BasicInfo,
-    Contact : ContactInfo
+    Contact : ContactInfo,
+    Auth : Auth
 };
