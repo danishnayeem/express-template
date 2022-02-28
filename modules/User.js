@@ -1,8 +1,8 @@
 const Db = require('../modules/Database');
+const Utils = require( '../modules/Utils' );
 class BasicInfo{
     static Filter(
         {
-            prProjectAuth="",
             prUserId = 0,
             prFirstName = "",
             prLastName = "", 
@@ -18,7 +18,7 @@ class BasicInfo{
                 Db.CoreDb.Procedure(
                     "spUser_BasicInfo_Filter",
                     [
-                        prProjectAuth,
+                        Utils.Config.ProjectAuth,
                         prUserId,
                         prFirstName,
                         prLastName,
@@ -29,11 +29,21 @@ class BasicInfo{
                         prResultPerPage
                     ],
                     (res)=>{
-                        Resolve( res );
+                        Resolve( res.fetchAll() );
                     }
                 );
             }
         );
+    }
+
+    static Update(
+        {
+            prOnId,
+            prFirstName = "",
+            prLastName = ""
+        }
+    ){
+
     }
 }
 
@@ -44,6 +54,20 @@ class ContactInfo{
                 email : "dnshnayeem@gmai.com"
             }
         ]
+    }
+}
+
+
+class Auth{
+    static Login(
+        prLoginId, 
+        prLoginPassword
+    ){
+
+    }
+
+    static Verify(){
+        // Continue to add auth key in user table and then from here/
     }
 }
 

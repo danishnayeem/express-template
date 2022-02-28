@@ -7,10 +7,18 @@ var logger = require('morgan');
 const Db = require( "./modules/Database" );
 Db.CoreDb.Connect();
 
+const Utils = require( './modules/Utils' );
+Utils.Config.LogValues = JSON.stringify( express.request.headers );
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+//Verify Project & User through Authorization Key
+app.use( Utils.Auth.Init );
+app.use( Utils.Auth.VerifyProject );
+app.use( Utils.Auth.ConfigureUser );
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

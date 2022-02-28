@@ -1,5 +1,6 @@
 const mysqlx = require( "@mysql/xdevapi" );
 class Core{
+
     static Config = {
         host : "localhost",
         port : 33060,
@@ -7,6 +8,7 @@ class Core{
         password : "C80b905b65fc@",
         schema : "iDan_Core"
     }
+    
     static Session = null;
 
     static Connect(){
@@ -29,11 +31,12 @@ class Core{
         });
         Params = Params.join(',');
         var Sql = 'CALL ' + spName + '(' + Params + ');';
-        var query = Core.Session.sql( Sql ).bind( spPara );
-        console.log(query.getSQL(), spPara);
-        query.execute(res=>{
-            Callback( err ? {Status : false} : res );
-        });
+        const query = Core.Session.sql( Sql ).bind( spPara );
+        query.execute().then(
+            res=>{
+                Callback( res );
+            }
+        )
     }
 }
 

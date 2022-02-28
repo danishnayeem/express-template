@@ -1,5 +1,6 @@
 const User = require('../modules/User.js');
 var express = require('express');
+const Utils = require('../modules/Utils.js');
 
 var rt_basic = express.Router();
 var rt_contact = express.Router();
@@ -7,26 +8,16 @@ var rt_credentials = express.Router();
 
 var router = express.Router();
 
-rt_basic.get('/', function(req, res, next) {
-  User.Basic.Filter({
-    prProjectAuth : "abcd"
-  }).then(
-    (rs)=>{
-    res.send(rs)
-    }
-  );
+rt_basic.post('/', function(req, res, next) {
+  User.Basic.Filter(
+    req.body
+  ).then(res.send.bind(res));
 });
-rt_basic.get('/Update', function(req, res, next) {
-  User.Basic.Filter({
-    prProjectAuth : "abcd"
-  }).then(
-    (rs)=>{
-    res.send(rs)
-    }
-  );
+rt_basic.post('/Update', function(req, res, next) {
+  User.Basic.Filter().then(res.send.bind(res));
 });
-rt_basic.get('/UpdateGender', function(req, res, next) {
-  res.send( User.Basic.Filter() );
+rt_basic.post('/ById/:UserId', function(req, res, next) {
+  User.Basic.Filter().then(res.send.bind(res));
 });
 
 router.use( '/Basic', rt_basic );
