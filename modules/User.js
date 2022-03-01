@@ -1,5 +1,5 @@
 const Db = require('../modules/Database');
-const Utils = require( '../modules/Utils' );
+const Config = require( '../modules/Config' );
 
 class BasicInfo{
     static Filter(
@@ -19,7 +19,7 @@ class BasicInfo{
                 Db.CoreDb.Procedure(
                     "spUser_BasicInfo_Filter",
                     [
-                        Utils.Auth.Keys.ProjectAuth,
+                        Config.Project.Auth,
                         prUserId,
                         prFirstName,
                         prLastName,
@@ -42,9 +42,26 @@ class BasicInfo{
             prOnId,
             prFirstName = "",
             prLastName = ""
-        }
+        }={}
     ){
-
+        return new Promise(
+            (Resolve, Reject)=>{
+                Db.CoreDb.Procedure(
+                    "spUser_BasicInfo_Update",
+                    [
+                        Config.Project.Auth,
+                        Config.Client.UserId,
+                        prOnId,
+                        prFirstName,
+                        prLastName,
+                        Config.Client.LogValues
+                    ],
+                    res=>{
+                        Resolve( res.fetchAll() );
+                    }
+                );
+            }
+        );
     }
 }
 
@@ -97,6 +114,10 @@ class Auth{
                 );
             }
         );
+    }
+
+    static VerifyApi( ApiPath ){
+        
     }
 }
 

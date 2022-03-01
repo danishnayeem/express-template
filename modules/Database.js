@@ -1,4 +1,24 @@
 const mysqlx = require( "@mysql/xdevapi" );
+const e = require("express");
+
+class Response{
+    static Error({
+        type = "DATABASE_ERROR",
+        message = "no message",
+        log = "no log"
+    }){
+        return {
+            fetchAll : ()=>{
+                return {
+                    Error : true,
+                    Type : type,
+                    Message : message,
+                    Log : log
+                }
+            }
+        }
+    }
+}
 class Core{
     static ProjectAuth = "8c85193fdf943fe310ad4696b3c4cc0a"
     static Config = {
@@ -17,6 +37,7 @@ class Core{
                 Core.Session = session;
             }
         );
+
     }
 
     static Procedure(
@@ -24,19 +45,39 @@ class Core{
         spPara,
         Callback
     ){
-        spPara = spPara ? spPara : [];
-        var Params = [];
-        spPara.map(x=>{
-            Params.push( '?' );
-        });
-        Params = Params.join(',');
-        var Sql = 'CALL ' + spName + '(' + Params + ');';
-        const query = Core.Session.sql( Sql ).bind( spPara );
-        query.execute().then(
-            res=>{
-                Callback( res );
-            }
-        )
+        try{
+            spPara = spPara ? spPara : [];
+            var Params = [];
+            spPara.map(x=>{
+                Params.push( '?' );
+            });
+            Params = Params.join(',');
+            var Sql = 'CALL ' + spName + '(' + Params + ');';
+            const query = Core.Session.sql( Sql ).bind( spPara );
+            query.execute().then(
+                res=>{
+                    Callback( res );
+                }
+            ).catch(
+                err=>{
+                    Callback(
+                        Response.Error({
+                            type : "PROCEDURE_ERROR",
+                            message : "Procedure executing error",
+                            log : err.message
+                        })
+                    );
+                }
+            );
+        }catch( e ){
+            Callback(
+                Response.Error({
+                    type : "PROCEDURE_ERROR",
+                    message : "Error before executing procedure",
+                    log : err.message
+                })
+            );
+        }
     }
 }
 

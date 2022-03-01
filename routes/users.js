@@ -14,7 +14,19 @@ rt_basic.post('/', function(req, res, next) {
   ).then(res.send.bind(res));
 });
 rt_basic.post('/Update', function(req, res, next) {
-  User.Basic.Filter().then(res.send.bind(res));
+  if( !req.body.prOnId )
+    res.send(
+      Utils.Response.Error( {
+        type : "PARAMETER_NOT_FOUND",
+        message : "User id not supplied"
+      } )
+    );
+  else
+    User.Basic.Update(
+      req.body
+    ).then(
+      res.send.bind(res)
+    );
 });
 rt_basic.post('/ById/:UserId', function(req, res, next) {
   User.Basic.Filter().then(res.send.bind(res));
