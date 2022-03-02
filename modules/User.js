@@ -117,7 +117,21 @@ class Auth{
     }
 
     static VerifyApi( ApiPath ){
-        
+        return new Promise(
+            (Resolve, Reject)=>{
+                Db.CoreDb.Procedure(
+                    "spUser_VerifyApi",
+                    [
+                        Config.Client.UserId,
+                        ApiPath,
+                        '{"name":1}'
+                    ],
+                    res=>{
+                        Resolve( res.fetchAll()[0][0] );
+                    }
+                );
+            }
+        );
     }
 }
 

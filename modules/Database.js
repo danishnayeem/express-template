@@ -9,12 +9,12 @@ class Response{
     }){
         return {
             fetchAll : ()=>{
-                return {
+                return [{
                     Error : true,
                     Type : type,
                     Message : message,
                     Log : log
-                }
+                }]
             }
         }
     }
@@ -28,17 +28,6 @@ class Core{
         password : "C80b905b65fc@",
         schema : "iDan_Core"
     }
-    
-    static Session = null;
-
-    static Connect(){
-        mysqlx.getSession(Core.Config).then(
-            session=>{
-                Core.Session = session;
-            }
-        );
-
-    }
 
     static Procedure(
         spName,
@@ -46,6 +35,7 @@ class Core{
         Callback
     ){
         try{
+            console.log( spPara );
             spPara = spPara ? spPara : [];
             var Params = [];
             spPara.map(x=>{
@@ -53,20 +43,32 @@ class Core{
             });
             Params = Params.join(',');
             var Sql = 'CALL ' + spName + '(' + Params + ');';
-            const query = Core.Session.sql( Sql ).bind( spPara );
-            query.execute().then(
-                res=>{
-                    Callback( res );
+            mysqlx.getSession(Core.Config).then(
+                ses=>{
+                    const query = ses.sql( Sql ).bind( spPara );
+                    query.execute().then(
+                        res=>{
+                            Callback( res );
+                        }
+                    ).catch(
+                        err=>{
+                            Callback(
+                                Response.Error({
+                                    type : "PROCEDURE_ERROR",
+                                    message : "Procedure executing error",
+                                    log : err.message
+                                })
+                            );
+                        }
+                    );
                 }
             ).catch(
                 err=>{
-                    Callback(
-                        Response.Error({
-                            type : "PROCEDURE_ERROR",
-                            message : "Procedure executing error",
-                            log : err.message
-                        })
-                    );
+                    Response.Error({
+                        type : "CONNECTION_ERROR",
+                        message : "Cannot connect to database",
+                        log : err.message
+                    });
                 }
             );
         }catch( e ){

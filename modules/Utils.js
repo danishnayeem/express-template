@@ -81,7 +81,21 @@ class Auth{
     }
 
     static VerifyApi( req, res, next ){
-        res.send( req.originalUrl );
+        User.Auth.VerifyApi(
+            req.originalUrl
+        ).then(
+            r=>{
+                if( r.Error )
+                    res.send(r);
+                else if( r.Status )
+                    next();
+                else
+                    res.send( Response.Error({
+                        type : "API_ERROR",
+                        message : r.Message
+                    }) );
+            }
+        );
     }
 }
 
