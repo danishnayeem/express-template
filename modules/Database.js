@@ -8,17 +8,14 @@ class Response{
         log = "no log"
     }){
         return {
-            fetchAll : ()=>{
-                return [{
-                    Error : true,
-                    Type : type,
-                    Message : message,
-                    Log : log
-                }]
-            }
+            Error : true,
+            Type : type,
+            Message : message,
+            Log : log
         }
     }
 }
+
 class Core{
     static ProjectAuth = "8c85193fdf943fe310ad4696b3c4cc0a"
     static Config = {
@@ -35,7 +32,6 @@ class Core{
         Callback
     ){
         try{
-            console.log( spPara );
             spPara = spPara ? spPara : [];
             var Params = [];
             spPara.map(x=>{

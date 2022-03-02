@@ -7,10 +7,10 @@ class Auth{
 
     static Init( req, res, next ){
         try{
-            Config.Client.LogValues = {
+            Config.Client.LogValues = JSON.stringify({
                 Headers : req.headers,
                 IP : req.socket.remoteAddress
-            };
+            });
             Config.Client.AuthKeys = JSON.parse(req.headers.authorization);
             next();
         }catch( e ){

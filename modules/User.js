@@ -124,10 +124,10 @@ class Auth{
                     [
                         Config.Client.UserId,
                         ApiPath,
-                        '{"name":1}'
+                        Config.Client.LogValues
                     ],
                     res=>{
-                        Resolve( res.fetchAll()[0][0] );
+                        Resolve( res.Error ? res : res.fetchAll()[0][0] );
                     }
                 );
             }
