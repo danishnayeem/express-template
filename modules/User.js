@@ -1,5 +1,5 @@
-const Db = require('../modules/Database');
-const Config = require( '../modules/Config' );
+const Db = require('./Database');
+const Config = require( './Config' );
 
 class BasicInfo{
     static Filter(
